@@ -1,6 +1,5 @@
 package com.flipkart.rasl;
 
-import com.jcraft.jsch.HASH;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -16,9 +15,10 @@ public class CombinedReport implements Runnable{
     private String closing_file;
     private List<String>  stock_areas;
     private ArrayList<String> fsns = new ArrayList<String>();
-    private static final Map<String, String> headerMapping;
-    SummaryReport summaryReport = null;
+    //private static final Map<String, String> headerMapping;
+    Transformer transformer = null;
 
+    /*
     static
     {
         headerMapping = new HashMap<String, String>();
@@ -76,6 +76,7 @@ public class CombinedReport implements Runnable{
         }
     }
 
+    */
 
     List<String> headers = Arrays.asList("event", "rasl_mm_event_id", "source_event", "source_event_date", "fsn", "sku","package_id", "warehouse", "event_quantity", "from_stock_type", "to_stock_type", "quantity_moved", "shipment_id", "order_id", "grn_id", "mm_valuation_transaction_date", "current_component_id", "irn_id", "irn_irn_date", "unit_price_without_tax", "actual_unit_price_without_tax", "unit_tax_amount", "actual_unit_tax_amount", "igst_tax_rate","igst_unit_tax_amount","igst_actual_unit_tax_amount","sgst_tax_rate","sgst_unit_tax_amount","sgst_actual_unit_tax_amount","cgst_tax_rate","cgst_unit_tax_amount","cgst_actual_unit_tax_amount","cess_tax_rate","cess_unit_tax_amount","cess_actual_unit_tax_amount","hsn","mrp", "price_type", "tax_rate", "tax_type", "currency", "price_component_transaction_date","vs_id","variance_id", "variance_reason", "grn_quantity", "consignment_id", "ro_id", "analytics_category", "seller_id", "type");
     //List<String> final_headers = Arrays.asList("fsn","sku","package_id","from_area","to_area","warehouse","transaction_type","transaction_reference","purchase_price","tax_amount","stock_equation_quantity","price_type","tax_type","final_cost","movement_date","seller_id","analytics_category","component_id","vs_ref","location","price_component_transaction_date", "hsn", "mrp","is_mps");
@@ -92,7 +93,7 @@ public class CombinedReport implements Runnable{
 
         this.opening_file = opening_file;
         this.closing_file = closing_file;
-        this.summaryReport = new SummaryReport(opening_date, closing_date);
+        this.transformer = new Transformer(opening_date, closing_date);
 
         //this.report = new BufferedWriter(new FileWriter(this.filename));
         //this.opening_file = new BufferedReader(new FileReader(opening_file));
@@ -151,122 +152,122 @@ public class CombinedReport implements Runnable{
                     System.out.println("writing");
                     ArrayList<String> row = new ArrayList<String>();
 
-                    row.add(record.getString(headerMapping.get("event")));
+                    row.add(record.getString("event"));
                     row.add(record.getString("dummy"));
-                    row.add(record.getString(headerMapping.get("source_event")));
-                    row.add(record.getString(headerMapping.get("source_event_date")));
-                    row.add(record.getString(headerMapping.get("fsn")));
-                    row.add(record.getString(headerMapping.get("sku")));
-                    row.add(record.getString(headerMapping.get("package_id")));
-                    row.add(record.getString(headerMapping.get("warehouse")));
-                    row.add(record.getString(headerMapping.get("event_quantity")));
-                    row.add(record.getString(headerMapping.get("from_stock_type")));
-                    row.add(record.getString(headerMapping.get("to_stock_type")));
-                    row.add(record.getString(headerMapping.get("quantity_moved")));
-                    row.add(record.getString(headerMapping.get("shipment_id")));
-                    row.add(record.getString(headerMapping.get("order_id")));
-                    row.add(record.getString(headerMapping.get("grn_id")));
-                    row.add(record.getString(headerMapping.get("mm_valuations_transaction_date")));
-                    row.add(record.getString(headerMapping.get("component_id")));
-                    row.add(record.getString(headerMapping.get("irn_id")));
-                    row.add(record.getString(headerMapping.get("irn_irn_date")));
-                    row.add(record.getString(headerMapping.get("unit_price_without_tax")));
-                    row.add(record.getString(headerMapping.get("actual_unit_price_without_tax")));
-                    row.add(record.getString(headerMapping.get("unit_tax_amount")));
-                    row.add(record.getString(headerMapping.get("actual_unit_tax_amount")));
+                    row.add(record.getString("source_event"));
+                    row.add(record.getString("source_event_date"));
+                    row.add(record.getString("fsn"));
+                    row.add(record.getString("sku"));
+                    row.add(record.getString("package_id"));
+                    row.add(record.getString("warehouse"));
+                    row.add(record.getString("event_quantity"));
+                    row.add(record.getString("from_stock_type"));
+                    row.add(record.getString("to_stock_type"));
+                    row.add(record.getString("quantity_moved"));
+                    row.add(record.getString("shipment_id"));
+                    row.add(record.getString("order_id"));
+                    row.add(record.getString("grn_id"));
+                    row.add(record.getString("mm_valuations_transaction_date"));
+                    row.add(record.getString("component_id"));
+                    row.add(record.getString("irn_id"));
+                    row.add(record.getString("irn_irn_date"));
+                    row.add(record.getString("unit_price_without_tax"));
+                    row.add(record.getString("actual_unit_price_without_tax"));
+                    row.add(record.getString("unit_tax_amount"));
+                    row.add(record.getString("actual_unit_tax_amount"));
                     System.out.println(row);
-                    if (record.has(headerMapping.get("igst_tax_rate"))) {
-                        row.add(record.getString(headerMapping.get("igst_tax_rate")));
+                    if (record.has("igst_tax_rate")) {
+                        row.add(record.getString("igst_tax_rate"));
                     } else {
                         row.add("0.0");
                     }
-                    if (record.has(headerMapping.get("igst_unit_tax_amount"))) {
-                        row.add(record.getString(headerMapping.get("igst_unit_tax_amount")));
+                    if (record.has("igst_unit_tax_amount")){
+                        row.add(record.getString("igst_unit_tax_amount"));
                     } else {
                         row.add("0.0");
                     }
-                    if (record.has(headerMapping.get("igst_actual_unit_tax_amount"))) {
-                        row.add(record.getString(headerMapping.get("igst_actual_unit_tax_amount")));
+                    if (record.has("igst_actual_unit_tax_amount")) {
+                        row.add(record.getString("igst_actual_unit_tax_amount"));
                     } else {
                         row.add("0.0");
                     }
-                    if (record.has(headerMapping.get("sgst_tax_rate"))) {
-                        row.add(record.getString(headerMapping.get("sgst_tax_rate")));
+                    if (record.has("sgst_tax_rate")) {
+                        row.add(record.getString("sgst_tax_rate"));
                     } else {
                         row.add("0.0");
                     }
-                    if (record.has(headerMapping.get("sgst_unit_tax_amount"))) {
-                        row.add(record.getString(headerMapping.get("sgst_unit_tax_amount")));
+                    if (record.has("sgst_unit_tax_amount")) {
+                        row.add(record.getString("sgst_unit_tax_amount"));
                     } else {
                         row.add("0.0");
                     }
-                    if (record.has(headerMapping.get("sgst_actual_unit_tax_amount"))) {
-                        row.add(record.getString(headerMapping.get("sgst_actual_unit_tax_amount")));
+                    if (record.has("sgst_actual_unit_tax_amount")) {
+                        row.add(record.getString("sgst_actual_unit_tax_amount"));
                     } else {
                         row.add("0.0");
                     }
-                    if (record.has(headerMapping.get("cgst_tax_rate"))) {
-                        row.add(record.getString(headerMapping.get("cgst_tax_rate")));
+                    if (record.has("cgst_tax_rate")) {
+                        row.add(record.getString("cgst_tax_rate"));
                     } else {
                         row.add("0.0");
                     }
-                    if (record.has(headerMapping.get("cgst_unit_tax_amount"))) {
-                        row.add(record.getString(headerMapping.get("cgst_unit_tax_amount")));
+                    if (record.has("cgst_unit_tax_amount")) {
+                        row.add(record.getString("cgst_unit_tax_amount"));
                     } else {
                         row.add("0.0");
                     }
-                    if (record.has(headerMapping.get("cgst_actual_unit_tax_amount"))) {
-                        row.add(record.getString(headerMapping.get("cgst_actual_unit_tax_amount")));
+                    if (record.has("cgst_actual_unit_tax_amount")) {
+                        row.add(record.getString("cgst_actual_unit_tax_amount"));
                     } else {
                         row.add("0.0");
                     }
-                    if (record.has(headerMapping.get("cess_tax_rate"))) {
-                        row.add(record.getString(headerMapping.get("cess_tax_rate")));
+                    if (record.has("cess_tax_rate")) {
+                        row.add(record.getString("cess_tax_rate"));
                     } else {
                         row.add("0.0");
                     }
-                    if (record.has(headerMapping.get("cess_unit_tax_amount"))) {
-                        row.add(record.getString(headerMapping.get("cess_unit_tax_amount")));
+                    if (record.has("cess_unit_tax_amount")) {
+                        row.add(record.getString("cess_unit_tax_amount"));
                     } else {
                         row.add("0.0");
                     }
 
-                    if (record.has(headerMapping.get("cess_actual_unit_tax_amount"))) {
-                        row.add(record.getString(headerMapping.get("cess_actual_unit_tax_amount")));
+                    if (record.has("cess_actual_unit_tax_amount")) {
+                        row.add(record.getString("cess_actual_unit_tax_amount"));
                     } else {
                         row.add("0.0");
                     }
-                    row.add(record.getString(headerMapping.get("hsn")));
-                    if (record.has(headerMapping.get("mrp"))) {
-                        row.add(record.getString(headerMapping.get("mrp")));
+                    row.add(record.getString("hsn"));
+                    if (record.has("mrp")) {
+                        row.add(record.getString("mrp"));
                     } else {
                         row.add("0.0");
                     }
-                    row.add(record.getString(headerMapping.get("price_type")));
-                    row.add(record.getString(headerMapping.get("tax_rate")));
-                    row.add(record.getString(headerMapping.get("tax_type")));
-                    row.add(record.getString(headerMapping.get("currency")));
+                    row.add(record.getString("price_type"));
+                    row.add(record.getString("tax_rate"));
+                    row.add(record.getString("tax_type"));
+                    row.add(record.getString("currency"));
                     row.add(record.getString("dummy"));
-                    row.add(record.getString(headerMapping.get("vs_id")));
-                    row.add(record.getString(headerMapping.get("variance_id")));
-                    row.add(record.getString(headerMapping.get("variance_reason")));
-                    row.add(record.getString(headerMapping.get("grn_quantity")));
-                    row.add(record.getString(headerMapping.get("consignment_id")));
-                    row.add(record.getString(headerMapping.get("ro_id")));
+                    row.add(record.getString("vs_id"));
+                    row.add(record.getString("variance_id"));
+                    row.add(record.getString("variance_reason"));
+                    row.add(record.getString("grn_quantity"));
+                    row.add(record.getString("consignment_id"));
+                    row.add(record.getString("ro_id"));
                     if(record.has("analytics_category")){
-                        row.add(record.getString(headerMapping.get("analytics_category")));
+                        row.add(record.getString("analytics_category"));
                     }
                     else {
                         row.add("NULL");
                     }
-                    row.add(record.getString(headerMapping.get("seller_id")));
-                    row.add(record.getString(headerMapping.get("type")));
+                    row.add(record.getString("seller_id"));
+                    row.add(record.getString("type"));
 
                     System.out.println(row.size());
                     System.out.println(row);
                     System.out.println(headers);
                     JSONObject row_hash = Utils.constructMap(row, headers);
-                    ArrayList<String> final_row = this.summaryReport.transformRecord(row_hash);
+                    ArrayList<String> final_row = this.transformer.transformRecord(row_hash);
                     String idList = final_row.toString();
                     String result = idList.substring(1, idList.length() - 1).replace(", ", ",");
 
@@ -350,7 +351,7 @@ public class CombinedReport implements Runnable{
         }
         Boolean added_movements = null;
         try {
-            added_movements = this.movements.getMovements();
+            added_movements = this.movements.getMovements(transformer);
         } catch (Exception e) {
             e.printStackTrace();
         }

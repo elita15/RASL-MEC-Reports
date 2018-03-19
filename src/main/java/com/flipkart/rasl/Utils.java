@@ -1,15 +1,18 @@
 package com.flipkart.rasl;
 
+import com.jcraft.jsch.HASH;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
+import java.io.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static java.lang.Math.min;
@@ -113,5 +116,42 @@ public class Utils {
         }
         return record;
 
+    }
+
+    public static HashMap<String,Integer> getRange(String seller_id){
+        BufferedReader  range_reader=null;
+        try {
+            range_reader = new BufferedReader(new FileReader("data/" + seller_id.toUpperCase() + "/"+ Config.range_path));
+            Integer start_range = Integer.parseInt(range_reader.readLine().trim().replaceAll("\n",""));
+            Integer end_range = Integer.parseInt(range_reader.readLine().trim().replaceAll("\n",""));
+            if(start_range==null || end_range==null){
+                throw new IllegalArgumentException("Range start or range end is null");
+            }
+            HashMap<String,Integer> range = new HashMap<String,Integer>();
+            range.put("start",start_range);
+            range.put("end",end_range);
+            range_reader.close();
+
+        }
+        catch(FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch(IOException e){
+            e.printStackTrace();
+
+        }
+        catch(IllegalArgumentException e){
+            e.printStackTrace();
+        }
+        finally{
+            if(range_reader!=null){
+                try {
+                    range_reader.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
     }
 }

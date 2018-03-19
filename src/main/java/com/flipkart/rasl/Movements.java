@@ -42,7 +42,7 @@ public class Movements {
 
     }
 
-    public Boolean getMovements() {
+    public Boolean getMovements(Transformer transformer) {
 
         this.pool_size=1;
         Integer thread_cnt=0;

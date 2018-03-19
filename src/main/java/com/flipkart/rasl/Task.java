@@ -399,6 +399,7 @@ public class Task implements Runnable {
 
                 processResult(results, writer);
                 System.out.println("got exception");
+            }
             /*System.out.println("select * from rasl_mm_events as rme inner  join rasl_events as re on rme.id=re.eventable_id inner  join rasl_event_mm_valuations as rem on re.id=rem.rasl_event_id inner join mm_valuations as mv on " +
                     "(rem.mm_valuation_id=mv.id and rme.from_stock_type=mv.stock_type) inner join mm_valuation_price_components as mvp on mv.id = mvp.`mm_valuation_id` inner join price_components as pc on mvp.price_component_id=pc.id where ((rme.id> " + Integer.toString(offset_start) + " and rme.id< " + Integer.toString(offset_end) + " ) and ((mv.is_invoice_adjusted=1 and pc.price_type=\"invoice\") or (mv.is_invoice_adjusted=0 and pc.price_type != \"invoice\")))"
             ); */
@@ -412,4 +413,4 @@ public class Task implements Runnable {
         }
 
     }
-}
+
